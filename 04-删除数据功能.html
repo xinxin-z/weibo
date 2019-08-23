@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>微博发布效果</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .weibo {
+      width: 600px;
+      border: 1px solid #ccc;
+
+      margin: 100px auto;
+      padding: 10px;
+
+    }
+
+    .weibo-text {
+      width: 590px;
+      height: 140px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      outline: none;
+      resize: none;
+    }
+
+    .weibo-text:focus {
+      border-color: #f60;
+    }
+
+    .weibo-btn {
+      width: 80px;
+      height: 30px;
+      background-color: #f90;
+      color: #fff;
+      border: 0 none;
+      margin-top: 5px;
+      border-radius: 3px;
+      cursor: pointer;
+      outline: 0 none;
+    }
+
+    .weibo-list {
+      padding-top: 10px;
+    }
+
+    .weibo-list li {
+      font-size: 14px;
+      line-height: 30px;
+      border-bottom: 1px dotted #ccc;
+      overflow: hidden;
+    }
+
+    .weibo-list li p {
+      float: left;
+    }
+
+    .weibo-list li span {
+      float: right;
+      cursor: pointer;
+    }
+
+    .weibo-list li input {
+      height: 24px;
+      line-height: 24px;
+      width: 300px;
+      font-size: 14px;
+      border: 0 none;
+    }
+
+    .time {
+      margin-right: 10px;
+      font-style: normal;
+      float: right;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="weibo">
+    <textarea class="weibo-text"></textarea>
+    <input class="weibo-btn" value="发布" type="button">
+    <ul class="weibo-list">
+      <!-- <li>
+            <p class="content">快来收了这九款用上就停不下来的应用吧！！</p>
+            <span class="time"></span>
+            <span class="del">删除</span>
+        </li> -->
+    </ul>
+  </div>
+</body>
+<script src="../kits/kits.js"></script>
+<script>
+  // 获取元素
+  let text=document.querySelector('.weibo-text');
+  let btn=document.querySelector('.weibo-btn');
+  let ul=document.querySelector('.weibo-list');
+  // 把数据从本地存储中读取
+  let  datas=localStorage.getItem('wbshuju');
+console.log(datas);
+datas=JSON.parse(datas);
+console.log(datas);
+datas=datas||[];
+datas.forEach(function(e,i) {
+  // 遍历每个数组
+  let li=document.createElement('li');
+li.innerHTML='<p>'+e.content+'</p>'+'<span class=del>'+e.time+'删除</span>';
+ul.appendChild(li);
+console.log(e);
+});
+
+
+  // 注册点击事件
+  // 定义一个数组存储要新增的数据
+  // var datas=[];
+btn.onclick=function(){
+  // 获取文本域内容，内容不能为空
+  let content=text.value;
+  if(content.trim().length==0){
+    alert('请先输入文字，再发布');
+  return;
+  } 
+  // 生成当前时间
+  let time=kits.formatDate();
+  console.log(time);
+// 生成一个新的li;
+let li=document.createElement('li');
+li.innerHTML='<p class="content">'+content+'</p>'+'<span class="del">'+time+'删除</span>';
+// ul.append(li);向ul里面追加内容
+// 插入ul的最前面
+ul.insertBefore(li,ul.children[0]);
+// 清空文本域
+text.value='';
+
+
+let obj = {
+  content: content,
+      time: time
+    }
+// // 
+// // 把这个数据放在数组里面
+datas.unshift(obj);
+// // localStorage的使用
+// // localStorage.getItem(key):获取指定key本地存储的值
+// // localStorage.setItem(key,value)：将value存储到key字段
+
+let json = JSON.stringify(datas);
+// // JSON.stringify()的作用是将 JavaScript 值转换为 JSON 字符串，而JSON.parse()可以将JSON字符串转为一个对象。
+localStorage.setItem('wbshuju', json);
+  }
+
+//   <!-- 实现删除
+//  动态生成的元素，可能获取不到，需要使用委托的方式实现 -->
+ul.addEventListener('click',function(e){
+//  <!-- 判断是否点击的是span -->
+if(e.target.classList.contains('del')){
+  ul.removeChild(e.target.parentNode);
+}
+})
+
+</script>
+</html>
+
+
+
